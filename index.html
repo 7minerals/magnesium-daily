@@ -171,7 +171,12 @@
 
     <section class="posts-section" id="articles">
       <h2>Latest Articles</h2>
-      <div id="posts"><p>Loading posts...</p></div>
+      <!-- Static links so Google can find these posts without running the script below.
+           The script replaces this block with the full list once it loads. -->
+      <div id="posts">
+        <div class="post"><a href="/tests/benefits-of-magnesium-oil.html">What Are the Real Benefits of Magnesium Oil?</a></div>
+        <div class="post"><a href="/tests/best-magnesium-for-muscle-cramps.html">Which Magnesium Supplement Is Best for Muscle Cramps?</a></div>
+      </div>
     </section>
   </main>
 
@@ -181,18 +186,18 @@
 
   <script>
     fetch('https://api.github.com/repos/7minerals/magnesium-daily/contents/tests')
-      .then(r => r.json())
+      .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
       .then(files => {
         const posts = files.filter(f => f.name.endsWith('.html'));
         const div = document.getElementById('posts');
-        if (!posts.length) { div.innerHTML = '<p>Posts coming soon.</p>'; return; }
+        if (!posts.length) return;
         div.innerHTML = posts.map(f => {
           const raw = f.name.replace('.html', '').replace(/-/g, ' ').replace(/_\d{4}-\d{2}-\d{2}T.*$/, '');
           const title = raw.replace(/\w\S*/g, w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
           return `<div class="post"><a href="tests/${f.name}">${title}</a></div>`;
         }).join('');
       })
-      .catch(() => document.getElementById('posts').innerHTML = '<p>Posts coming soon.</p>');
+      .catch(() => {});
   </script>
 
 </body>
